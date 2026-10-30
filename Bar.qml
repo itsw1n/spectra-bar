@@ -1881,15 +1881,15 @@ Item {
 
     PrismPanel {
       visible: !root.vertical && slot.moduleName === "omarchy.active-window"
-      x: 0
+      x: Theme.segmentHeight / 2
       y: -(Theme.segmentHeight - slot.height) / 2
-      width: slot.width + 6
+      width: slot.width + 6 - Theme.segmentHeight / 2
       height: Theme.segmentHeight
       fillColor: Theme.focusSegment
+      leftSkew: -height
       rightSkew: -height
-      capLeft: true
       embedded: true
-      accentLeft: true
+      divideLeft: true
       divideRight: false
       z: -1
     }

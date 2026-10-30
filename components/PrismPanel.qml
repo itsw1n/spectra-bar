@@ -12,6 +12,7 @@ Item {
   property bool capRight: false
   property bool embedded: false
   property bool accentLeft: !embedded
+  property bool divideLeft: false
   property bool divideRight: embedded
   readonly property real lc: capLeft ? 4 : 0
   readonly property real rc: capRight ? 4 : 0
@@ -64,6 +65,13 @@ Item {
       fillColor: "transparent"
       startX: panel.capLeft ? 4.5 : 0.5; startY: 0.5
       PathLine { x: panel.capLeft ? 0.5 : panel.leftSkew * 0.7 + 0.5; y: panel.capLeft ? 4.5 : panel.height * 0.7 }
+    }
+    ShapePath {
+      strokeColor: panel.divideLeft ? Theme.border : "transparent"
+      strokeWidth: 0.8
+      fillColor: "transparent"
+      startX: 0.5; startY: 0.5
+      PathLine { x: panel.leftSkew + 0.5; y: panel.height - 0.5 }
     }
     ShapePath {
       strokeColor: panel.divideRight ? Theme.border : "transparent"
