@@ -1263,8 +1263,8 @@ Item {
     }
 
     margins {
-      top: root.barHidden && root.position === "top" ? -60 : 0
-      bottom: root.barHidden && root.position === "bottom" ? -60 : 0
+      top: root.barHidden && root.position === "top" ? -SpectraTokens.barHeight : 0
+      bottom: root.barHidden && root.position === "bottom" ? -SpectraTokens.barHeight : 0
       left: root.barHidden && root.position === "left" ? -root.barSize : 0
       right: root.barHidden && root.position === "right" ? -root.barSize : 0
     }
@@ -1277,7 +1277,7 @@ Item {
     }
 
     implicitWidth: root.vertical ? root.barSize : 0
-    implicitHeight: root.vertical ? 0 : 60
+    implicitHeight: root.vertical ? 0 : SpectraTokens.barHeight
     color: root.transparent ? "transparent" : SpectraTokens.background
     surfaceFormat.opaque: false
     WlrLayershell.namespace: "omarchy-bar"
@@ -1372,13 +1372,13 @@ Item {
 
         LeftModules {
           anchors.left: parent.left
-          anchors.leftMargin: Style.space(8)
+          anchors.leftMargin: SpectraTokens.outerPadding
           anchors.verticalCenter: parent.verticalCenter
         }
 
         RightModules {
           anchors.right: parent.right
-          anchors.rightMargin: Style.space(8)
+          anchors.rightMargin: SpectraTokens.outerPadding
           anchors.verticalCenter: parent.verticalCenter
         }
       }
@@ -1765,7 +1765,7 @@ Item {
       id: horizontalModuleList
 
       Item {
-        implicitWidth: Math.max(row.implicitWidth + 24, moduleListRoot.screenWidth * (moduleListRoot.segmentRole === "left" || moduleListRoot.segmentRole === "right" ? 0.29 : 0.17))
+        implicitWidth: Math.max(row.implicitWidth + 12, SpectraTokens.sectionWidth(moduleListRoot.screenWidth, moduleListRoot.segmentRole))
         implicitHeight: SpectraTokens.segmentHeight
 
         SpectraSegment {
@@ -1856,9 +1856,9 @@ Item {
     }
     implicitWidth: {
       if (root.vertical) return activeItem && activeItem.visible ? root.barSize : 0
-      if (moduleName === "spectra.emblem") return Math.max(68, Math.round(screenWidth * 0.05))
-      if (moduleName === "omarchy.active-window") return Math.max(160, Math.round(screenWidth * 0.29 - 165))
-      if (moduleName === "omarchy.media") return Math.max(160, Math.round(screenWidth * 0.29 - 155))
+      if (moduleName === "spectra.emblem") return SpectraTokens.badgeWidth(screenWidth)
+      if (moduleName === "omarchy.active-window") return Math.max(150, SpectraTokens.sectionWidth(screenWidth, "left") - 160)
+      if (moduleName === "omarchy.media") return Math.max(150, SpectraTokens.sectionWidth(screenWidth, "right") - 175)
       return activeItem && activeItem.visible ? activeItem.implicitWidth : 0
     }
     implicitHeight: moduleName === "spectra.emblem" && !root.vertical
@@ -1882,7 +1882,7 @@ Item {
       y: -(SpectraTokens.segmentHeight - slot.height) / 2
       width: slot.width
       height: SpectraTokens.segmentHeight
-      fillColor: "#0d1b30"
+      fillColor: SpectraTokens.focusSegment
       leftChamfer: SpectraTokens.chamfer
       rightChamfer: SpectraTokens.chamfer
       z: -1

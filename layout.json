@@ -30,7 +30,7 @@
         "type": "command",
         "exec": "printf '  \udb82\udcc7  '",
         "interval": 3600,
-        "fontSize": 28
+        "fontSize": 21
       },
       {
         "id": "omarchy.clock",
@@ -54,7 +54,11 @@
         "id": "omarchy.bluetooth"
       },
       {
-        "id": "omarchy.power"
+        "id": "omarchy.monitor"
+      },
+      {
+        "id": "omarchy.power",
+        "showPercentage": true
       }
     ]
   }
