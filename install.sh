@@ -1,15 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-config_dir="$HOME/.config/waybar"
-if ! command -v waybar >/dev/null 2>&1; then
-  printf 'Waybar is required. Install it with: omarchy pkg add waybar\n' >&2
-  exit 1
+plugin_dir="$HOME/.config/omarchy/plugins/itsw1n.spectra-bar"
+shell_config="$HOME/.config/omarchy/shell.json"
+[[ -f "$shell_config" ]] || { echo "Omarchy v4 shell.json is missing" >&2; exit 1; }
+python -m json.tool "$repo_dir/manifest.json" >/dev/null
+python -m json.tool "$repo_dir/layout.json" >/dev/null
+mkdir -p "$(dirname "$plugin_dir")"
+if [[ -e "$plugin_dir" || -L "$plugin_dir" ]]; then
+  backup_dir="$HOME/.local/state/spectra-bar/backups"
+  mkdir -p "$backup_dir"
+  mv "$plugin_dir" "$backup_dir/itsw1n.spectra-bar.$(date +%Y%m%d%H%M%S)"
 fi
-if [[ -e "$config_dir" && ! "$config_dir" -ef "$repo_dir" ]]; then
-  mv "$config_dir" "$config_dir.bak.$(date +%Y%m%d%H%M%S)"
-fi
-ln -sfn "$repo_dir" "$config_dir"
-chmod +x "$repo_dir/scripts/updates.sh"
-printf 'Spectra config linked at %s\n' "$config_dir"
-printf 'Omarchy v4 starts its own shell bar. See README.md for the optional switch to Waybar.\n'
+mkdir -p "$plugin_dir"
+cp "$repo_dir/Bar.qml" "$repo_dir/BarModel.js" "$repo_dir/manifest.json" "$plugin_dir/"
+mkdir -p "$plugin_dir/scripts"
+cp "$repo_dir/scripts/stats.sh" "$plugin_dir/scripts/"
+cp "$shell_config" "$shell_config.bak.$(date +%Y%m%d%H%M%S)"
+python - "$shell_config" "$repo_dir/layout.json" <<'PY'
+import json, sys
+from pathlib import Path
+config_path, layout_path = map(Path, sys.argv[1:])
+config = json.loads(config_path.read_text())
+config['bar'] = json.loads(layout_path.read_text())
+config_path.write_text(json.dumps(config, indent=2) + '\n')
+PY
+omarchy toggle bar off
+omarchy-shell shell rescanPlugins
+omarchy bar use itsw1n.spectra-bar
+printf 'Spectra Bar installed. Previous shell config saved beside %s\n' "$shell_config"

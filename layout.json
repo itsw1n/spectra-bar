@@ -1,0 +1,26 @@
+{
+  "position": "top",
+  "transparent": false,
+  "centerAnchor": "spectra.emblem",
+  "layout": {
+    "left": [
+      {"id": "omarchy.menu"},
+      {"id": "omarchy.workspaces"},
+      {"id": "omarchy.active-window", "maxWidth": 250}
+    ],
+    "center": [
+      {"id": "omarchy.spacer", "size": 10},
+      {"id": "spectra.stats", "type": "command", "exec": "~/.config/omarchy/plugins/itsw1n.spectra-bar/scripts/stats.sh", "interval": 5},
+      {"id": "spectra.emblem", "type": "command", "exec": "printf '  󰣇  '", "interval": 3600},
+      {"id": "omarchy.clock", "format": "ddd d  |  HH:mm"},
+      {"id": "omarchy.system-update"}
+    ],
+    "right": [
+      {"id": "omarchy.media"},
+      {"id": "omarchy.audio"},
+      {"id": "omarchy.network"},
+      {"id": "omarchy.bluetooth"},
+      {"id": "omarchy.power"}
+    ]
+  }
+}
