@@ -4,23 +4,58 @@
   "centerAnchor": "spectra.emblem",
   "layout": {
     "left": [
-      {"id": "omarchy.menu"},
-      {"id": "omarchy.workspaces"},
-      {"id": "omarchy.active-window", "maxWidth": 250}
+      {
+        "id": "omarchy.menu"
+      },
+      {
+        "id": "omarchy.workspaces"
+      },
+      {
+        "id": "omarchy.active-window",
+        "maxWidth": 250
+      }
     ],
     "center": [
-      {"id": "omarchy.spacer", "size": 10},
-      {"id": "spectra.stats", "type": "command", "exec": "~/.config/omarchy/plugins/itsw1n.spectra-bar/scripts/stats.sh", "interval": 5},
-      {"id": "spectra.emblem", "type": "command", "exec": "printf '  󰣇  '", "interval": 3600},
-      {"id": "omarchy.clock", "format": "ddd d  |  HH:mm"},
-      {"id": "omarchy.system-update"}
+      {
+        "id": "spectra.stats",
+        "type": "command",
+        "exec": "~/.config/omarchy/plugins/itsw1n.spectra-bar/scripts/stats.sh",
+        "interval": 5
+      },
+      {
+        "id": "omarchy.indicators"
+      },
+      {
+        "id": "spectra.emblem",
+        "type": "command",
+        "exec": "printf '  \udb82\udcc7  '",
+        "interval": 3600,
+        "fontSize": 28
+      },
+      {
+        "id": "omarchy.clock",
+        "format": "ddd d  |  HH:mm"
+      },
+      {
+        "id": "omarchy.system-update"
+      }
     ],
     "right": [
-      {"id": "omarchy.media"},
-      {"id": "omarchy.audio"},
-      {"id": "omarchy.network"},
-      {"id": "omarchy.bluetooth"},
-      {"id": "omarchy.power"}
+      {
+        "id": "omarchy.media"
+      },
+      {
+        "id": "omarchy.audio"
+      },
+      {
+        "id": "omarchy.network"
+      },
+      {
+        "id": "omarchy.bluetooth"
+      },
+      {
+        "id": "omarchy.power"
+      }
     ]
   }
 }

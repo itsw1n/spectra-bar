@@ -8,6 +8,7 @@ import qs.Commons
 import qs.Commons as Commons
 import qs.Ui
 import "BarModel.js" as BarModel
+import "SpectraTokens.js" as SpectraTokens
 
 Item {
   id: root
@@ -1262,8 +1263,8 @@ Item {
     }
 
     margins {
-      top: root.barHidden && root.position === "top" ? -78 : 0
-      bottom: root.barHidden && root.position === "bottom" ? -78 : 0
+      top: root.barHidden && root.position === "top" ? -60 : 0
+      bottom: root.barHidden && root.position === "bottom" ? -60 : 0
       left: root.barHidden && root.position === "left" ? -root.barSize : 0
       right: root.barHidden && root.position === "right" ? -root.barSize : 0
     }
@@ -1276,8 +1277,8 @@ Item {
     }
 
     implicitWidth: root.vertical ? root.barSize : 0
-    implicitHeight: root.vertical ? 0 : 78
-    color: root.transparent ? "transparent" : "#070d18"
+    implicitHeight: root.vertical ? 0 : 60
+    color: root.transparent ? "transparent" : SpectraTokens.background
     surfaceFormat.opaque: false
     WlrLayershell.namespace: "omarchy-bar"
     WlrLayershell.layer: WlrLayer.Top
@@ -1366,19 +1367,6 @@ Item {
 
       Item {
         anchors.fill: parent
-
-        Rectangle {
-          x: 20; y: 7; width: parent.width - 40; height: 1
-          color: "#233b60"
-        }
-        Text {
-          x: 28; y: 3
-          text: "01    S P E C T R A    /    Angular · Distinct · Refined"
-          color: "#9ebcff"
-          font.family: root.fontFamily
-          font.pixelSize: 10
-          font.bold: true
-        }
 
         CenterModules { anchors.fill: parent }
 
@@ -1551,11 +1539,15 @@ Item {
   component LeftModules: ModuleList {
     entries: root.layoutEntries("left")
     region: "left"
+    segmentRole: "left"
+    screenWidth: parent ? parent.width : 1920
   }
 
   component RightModules: ModuleList {
     entries: root.layoutEntries("right")
     region: "right"
+    segmentRole: "right"
+    screenWidth: parent ? parent.width : 1920
   }
 
   component CenterModules: Item {
@@ -1586,6 +1578,8 @@ Item {
           visible: !centerRoot.hasAnchor
           entries: centerRoot.entries
           region: "center"
+          segmentRole: "center"
+          screenWidth: parent.width
           anchors.centerIn: parent
         }
 
@@ -1593,6 +1587,8 @@ Item {
           visible: centerRoot.hasAnchor
           entries: root.entriesBefore(centerRoot.entries, root.centerAnchor)
           region: "center"
+          segmentRole: "center-left"
+          screenWidth: parent.width
           anchors.right: centerAnchorModule.left
           anchors.verticalCenter: centerAnchorModule.verticalCenter
         }
@@ -1602,6 +1598,7 @@ Item {
           visible: centerRoot.hasAnchor
           entry: centerRoot.anchorEntry
           region: "center"
+          screenWidth: parent.width
           anchors.centerIn: parent
         }
 
@@ -1609,6 +1606,8 @@ Item {
           visible: centerRoot.hasAnchor
           entries: root.entriesAfter(centerRoot.entries, root.centerAnchor)
           region: "center"
+          segmentRole: "center-right"
+          screenWidth: parent.width
           anchors.left: centerAnchorModule.right
           anchors.verticalCenter: centerAnchorModule.verticalCenter
         }
@@ -1748,6 +1747,8 @@ Item {
 
     property var entries: []
     property string region: ""
+    property string segmentRole: region
+    property real screenWidth: 1920
 
     visible: entries.length > 0
     // A hidden list must not build its modules. The center section declares
@@ -1763,16 +1764,30 @@ Item {
     Component {
       id: horizontalModuleList
 
-      Row {
-        spacing: 0
+      Item {
+        implicitWidth: Math.max(row.implicitWidth + 24, moduleListRoot.screenWidth * (moduleListRoot.segmentRole === "left" || moduleListRoot.segmentRole === "right" ? 0.29 : 0.17))
+        implicitHeight: SpectraTokens.segmentHeight
 
-        Repeater {
-          model: moduleListRoot.entries
+        SpectraSegment {
+          anchors.fill: parent
+          leftChamfer: moduleListRoot.segmentRole === "center-right" ? 0 : SpectraTokens.chamfer
+          rightChamfer: moduleListRoot.segmentRole === "center-left" ? 0 : SpectraTokens.chamfer
+        }
 
-          ModuleSlot {
-            required property var modelData
-            entry: modelData
-            region: moduleListRoot.region
+        Row {
+          id: row
+          anchors.centerIn: parent
+          spacing: 0
+
+          Repeater {
+            model: moduleListRoot.entries
+
+            ModuleSlot {
+              required property var modelData
+              entry: modelData
+              region: moduleListRoot.region
+              screenWidth: moduleListRoot.screenWidth
+            }
           }
         }
       }
@@ -1802,6 +1817,7 @@ Item {
 
     required property var entry
     property string region: ""
+    property real screenWidth: 1920
     readonly property string moduleName: root.entryId(entry)
     readonly property var moduleSettings: root.entrySettings(entry)
     readonly property string customType: root.customModuleType(entry)
@@ -1838,8 +1854,16 @@ Item {
       if (hint !== undefined && hint !== null && hint > 0) return Math.round(hint)
       return Math.max(Style.space(10), Math.round((root.vertical ? slot.height : slot.width) * 0.55))
     }
-    implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : activeItem.implicitWidth) : 0
-    implicitHeight: activeItem && activeItem.visible ? activeItem.implicitHeight : 0
+    implicitWidth: {
+      if (root.vertical) return activeItem && activeItem.visible ? root.barSize : 0
+      if (moduleName === "spectra.emblem") return Math.max(68, Math.round(screenWidth * 0.05))
+      if (moduleName === "omarchy.active-window") return Math.max(160, Math.round(screenWidth * 0.29 - 165))
+      if (moduleName === "omarchy.media") return Math.max(160, Math.round(screenWidth * 0.29 - 155))
+      return activeItem && activeItem.visible ? activeItem.implicitWidth : 0
+    }
+    implicitHeight: moduleName === "spectra.emblem" && !root.vertical
+      ? SpectraTokens.badgeHeight
+      : (activeItem && activeItem.visible ? activeItem.implicitHeight : (moduleName === "omarchy.media" ? root.barSize : 0))
     width: implicitWidth
     height: implicitHeight
     z: modulePointer.dragging ? 100 : 0
@@ -1852,15 +1876,35 @@ Item {
 
     HoverHandler { id: moduleHover }
 
-    Rectangle {
-      visible: !root.vertical && slot.activeItem && slot.activeItem.visible && slot.moduleName !== "omarchy.spacer"
-      anchors.fill: parent
-      anchors.margins: 1
-      color: slot.moduleName === "spectra.emblem" ? "#0c1930" : "#0b1424"
-      border.color: slot.moduleName === "spectra.emblem" ? "#9ebcff" : "#536685"
-      border.width: 1
-      radius: 3
+    SpectraSegment {
+      visible: !root.vertical && (slot.moduleName === "omarchy.active-window" || slot.moduleName === "omarchy.media")
+      x: 0
+      y: -(SpectraTokens.segmentHeight - slot.height) / 2
+      width: slot.width
+      height: SpectraTokens.segmentHeight
+      fillColor: "#0d1b30"
+      leftChamfer: SpectraTokens.chamfer
+      rightChamfer: SpectraTokens.chamfer
       z: -1
+    }
+
+    SpectraSegment {
+      visible: !root.vertical && slot.moduleName === "spectra.emblem"
+      anchors.fill: parent
+      fillColor: SpectraTokens.badge
+      lineColor: SpectraTokens.accent
+      leftChamfer: SpectraTokens.badgeChamfer
+      rightChamfer: SpectraTokens.badgeChamfer
+      z: -1
+    }
+
+    Text {
+      visible: !root.vertical && slot.moduleName === "omarchy.media" && (!slot.activeItem || !slot.activeItem.visible)
+      anchors.centerIn: parent
+      text: "󰐊  No media"
+      color: SpectraTokens.muted
+      font.family: root.fontFamily
+      font.pixelSize: 11
     }
 
     BorderSurface {
@@ -2045,7 +2089,9 @@ Item {
       if ("moduleName" in target) {
         try { target.moduleName = moduleName } catch (error) { /* built-in widgets declare a readonly name */ }
       }
-      if ("settings" in target) target.settings = moduleSettings
+      if ("settings" in target) {
+        try { target.settings = moduleSettings } catch (error) { /* custom modules derive readonly settings from entry */ }
+      }
     }
 
     Component {

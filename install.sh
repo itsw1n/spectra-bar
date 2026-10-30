@@ -13,7 +13,7 @@ if [[ -e "$plugin_dir" || -L "$plugin_dir" ]]; then
   mv "$plugin_dir" "$backup_dir/itsw1n.spectra-bar.$(date +%Y%m%d%H%M%S)"
 fi
 mkdir -p "$plugin_dir"
-cp "$repo_dir/Bar.qml" "$repo_dir/BarModel.js" "$repo_dir/manifest.json" "$plugin_dir/"
+cp "$repo_dir/Bar.qml" "$repo_dir/BarModel.js" "$repo_dir/SpectraSegment.qml" "$repo_dir/SpectraTokens.js" "$repo_dir/manifest.json" "$plugin_dir/"
 mkdir -p "$plugin_dir/scripts"
 cp "$repo_dir/scripts/stats.sh" "$plugin_dir/scripts/"
 cp "$shell_config" "$shell_config.bak.$(date +%Y%m%d%H%M%S)"
