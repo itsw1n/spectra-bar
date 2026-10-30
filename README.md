@@ -16,10 +16,12 @@ The installer backs up `~/.config/omarchy/shell.json`, copies the plugin into `~
 
 ## Structure and validation
 
-- `SpectraSegment.qml`: reusable flat graphite segment with precise chamfers and a blue-gray outline.
-- `SpectraTokens.js`: shared dimensions and colors.
+- `components/PrismPanel.qml`: reusable inset graphite surfaces, diagonal joins, and restrained edge accents.
+- `components/ArchBadge.qml` and `PrismConnector.qml`: layered central badge and triangular shoulder facets.
+- `Theme.qml`: shared dimensions and colors.
 - `layout.json`: native widget placement, with the Arch badge anchored to the physical screen center.
 - `Bar.qml`: Omarchy 4.0.6 bar engine with small SPECTRA-specific layout changes.
 - [Visual validation](docs/visual-validation.md): real Quickshell screenshots at 1366, 1920, and 2560 pixels, plus known differences from the reference.
+- [Saved geometry goal](docs/geometry-goal.md): approved reference and the constraints for future refinements.
 
 The installer saves prior shell and plugin state before activation. To roll back, select `omarchy.bar` and restore the latest `shell.json.bak.*` if you also want the old widget layout.

@@ -8,7 +8,7 @@ import qs.Commons
 import qs.Commons as Commons
 import qs.Ui
 import "BarModel.js" as BarModel
-import "SpectraTokens.js" as SpectraTokens
+import "components"
 
 Item {
   id: root
@@ -1263,8 +1263,8 @@ Item {
     }
 
     margins {
-      top: root.barHidden && root.position === "top" ? -SpectraTokens.barHeight : 0
-      bottom: root.barHidden && root.position === "bottom" ? -SpectraTokens.barHeight : 0
+      top: root.barHidden && root.position === "top" ? -Theme.barHeight : 0
+      bottom: root.barHidden && root.position === "bottom" ? -Theme.barHeight : 0
       left: root.barHidden && root.position === "left" ? -root.barSize : 0
       right: root.barHidden && root.position === "right" ? -root.barSize : 0
     }
@@ -1277,8 +1277,8 @@ Item {
     }
 
     implicitWidth: root.vertical ? root.barSize : 0
-    implicitHeight: root.vertical ? 0 : SpectraTokens.barHeight
-    color: root.transparent ? "transparent" : SpectraTokens.background
+    implicitHeight: root.vertical ? 0 : Theme.barHeight
+    color: root.transparent ? "transparent" : Theme.background
     surfaceFormat.opaque: false
     WlrLayershell.namespace: "omarchy-bar"
     WlrLayershell.layer: WlrLayer.Top
@@ -1372,13 +1372,13 @@ Item {
 
         LeftModules {
           anchors.left: parent.left
-          anchors.leftMargin: SpectraTokens.outerPadding
+          anchors.leftMargin: Theme.outerPadding
           anchors.verticalCenter: parent.verticalCenter
         }
 
         RightModules {
           anchors.right: parent.right
-          anchors.rightMargin: SpectraTokens.outerPadding
+          anchors.rightMargin: Theme.outerPadding
           anchors.verticalCenter: parent.verticalCenter
         }
       }
@@ -1765,13 +1765,15 @@ Item {
       id: horizontalModuleList
 
       Item {
-        implicitWidth: Math.max(row.implicitWidth + 12, SpectraTokens.sectionWidth(moduleListRoot.screenWidth, moduleListRoot.segmentRole))
-        implicitHeight: SpectraTokens.segmentHeight
+        implicitWidth: Math.max(row.implicitWidth + 12, Theme.sectionWidth(moduleListRoot.screenWidth, moduleListRoot.segmentRole))
+        implicitHeight: Theme.segmentHeight
 
-        SpectraSegment {
+        PrismPanel {
           anchors.fill: parent
-          leftChamfer: moduleListRoot.segmentRole === "center-right" ? 0 : SpectraTokens.chamfer
-          rightChamfer: moduleListRoot.segmentRole === "center-left" ? 0 : SpectraTokens.chamfer
+          leftSkew: moduleListRoot.segmentRole === "center-right" || moduleListRoot.segmentRole === "center-left" ? -height : (moduleListRoot.segmentRole === "right" ? height : 0)
+          rightSkew: moduleListRoot.segmentRole === "center-right" ? height : (moduleListRoot.segmentRole === "left" ? -height : 0)
+          capLeft: moduleListRoot.segmentRole === "left"
+          capRight: moduleListRoot.segmentRole === "right"
         }
 
         Row {
@@ -1835,6 +1837,7 @@ Item {
     }
     readonly property bool qmlCustom: customType === "qml"
     readonly property bool commandCustom: customType === "command"
+    readonly property bool imageCustom: customType === "image"
     readonly property bool registered: registryComponent !== null
     readonly property var activeItem: {
       if (registered) return registryLoader.item
@@ -1856,17 +1859,17 @@ Item {
     }
     implicitWidth: {
       if (root.vertical) return activeItem && activeItem.visible ? root.barSize : 0
-      if (moduleName === "spectra.emblem") return SpectraTokens.badgeWidth(screenWidth)
-      if (moduleName === "omarchy.active-window") return Math.max(150, SpectraTokens.sectionWidth(screenWidth, "left") - 160)
-      if (moduleName === "omarchy.media") return Math.max(150, SpectraTokens.sectionWidth(screenWidth, "right") - 175)
+      if (moduleName === "spectra.emblem") return Theme.badgeWidth(screenWidth)
+      if (moduleName === "omarchy.active-window") return Math.max(150, Theme.sectionWidth(screenWidth, "left") - 160)
+      if (moduleName === "omarchy.media") return Math.max(150, Theme.sectionWidth(screenWidth, "right") - 175)
       return activeItem && activeItem.visible ? activeItem.implicitWidth : 0
     }
     implicitHeight: moduleName === "spectra.emblem" && !root.vertical
-      ? SpectraTokens.badgeHeight
+      ? Theme.badgeHeight
       : (activeItem && activeItem.visible ? activeItem.implicitHeight : (moduleName === "omarchy.media" ? root.barSize : 0))
     width: implicitWidth
     height: implicitHeight
-    z: modulePointer.dragging ? 100 : 0
+    z: modulePointer.dragging ? 100 : (moduleName === "spectra.emblem" ? 5 : 0)
 
     Component.onCompleted: root.registerModuleSlot(slot)
     Component.onDestruction: {
@@ -1876,25 +1879,37 @@ Item {
 
     HoverHandler { id: moduleHover }
 
-    SpectraSegment {
-      visible: !root.vertical && (slot.moduleName === "omarchy.active-window" || slot.moduleName === "omarchy.media")
+    PrismPanel {
+      visible: !root.vertical && slot.moduleName === "omarchy.active-window"
       x: 0
-      y: -(SpectraTokens.segmentHeight - slot.height) / 2
-      width: slot.width
-      height: SpectraTokens.segmentHeight
-      fillColor: SpectraTokens.focusSegment
-      leftChamfer: SpectraTokens.chamfer
-      rightChamfer: SpectraTokens.chamfer
+      y: -(Theme.segmentHeight - slot.height) / 2
+      width: slot.width + 6
+      height: Theme.segmentHeight
+      fillColor: Theme.focusSegment
+      rightSkew: -height
+      capLeft: true
+      embedded: true
+      accentLeft: true
+      divideRight: false
       z: -1
     }
 
-    SpectraSegment {
+    PrismPanel {
+      visible: !root.vertical && slot.moduleName === "omarchy.media"
+      x: 0
+      y: -(Theme.segmentHeight - slot.height) / 2
+      width: slot.width - Theme.segmentHeight / 2
+      height: Theme.segmentHeight
+      fillColor: Theme.focusSegment
+      leftSkew: height
+      rightSkew: height
+      embedded: true
+      z: -1
+    }
+
+    ArchBadge {
       visible: !root.vertical && slot.moduleName === "spectra.emblem"
       anchors.fill: parent
-      fillColor: SpectraTokens.badge
-      lineColor: SpectraTokens.accent
-      leftChamfer: SpectraTokens.badgeChamfer
-      rightChamfer: SpectraTokens.badgeChamfer
       z: -1
     }
 
@@ -1902,7 +1917,7 @@ Item {
       visible: !root.vertical && slot.moduleName === "omarchy.media" && (!slot.activeItem || !slot.activeItem.visible)
       anchors.centerIn: parent
       text: "󰐊  No media"
-      color: SpectraTokens.muted
+      color: Theme.muted
       font.family: root.fontFamily
       font.pixelSize: 11
     }
@@ -1919,10 +1934,10 @@ Item {
 
     Loader {
       id: componentLoader
-      active: !slot.qmlCustom && !slot.registered
+      active: !slot.qmlCustom && !slot.imageCustom && !slot.registered
       sourceComponent: slot.commandCustom ? customCommandModuleComponent : emptyModuleComponent
       anchors.fill: parent
-      opacity: slot.dragSource ? 0.22 : 1.0
+      opacity: slot.moduleName === "spectra.emblem" ? 0 : (slot.dragSource ? 0.22 : 1.0)
       onLoaded: {
         slot.injectProps()
         Qt.callLater(slot.injectProps)

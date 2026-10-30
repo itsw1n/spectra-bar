@@ -1,17 +1,31 @@
 # Visual validation
 
-These are captures from the running Omarchy 4.0.6 Quickshell bar. Temporary Hyprland headless outputs supplied the 1366 and 2560 logical pixel widths at 1× scale; the laptop display is 1920 physical pixels at 1.25× scale. The headless output was removed after capture.
+The approved source is preserved as [goal.png](goal.png). All implementation captures below are from the running Omarchy 4.0.6 Quickshell bar. The laptop runs at 1920 physical pixels and 1.25× scale. Temporary headless outputs supplied 1366 and 2560 logical pixels at 1× scale and were removed after capture.
 
-| Width | Rendered capture | Checked result |
+| Width | Capture | Checked result |
 | --- | --- | --- |
-| 1366 | [Long window and media titles](screenshots/1366-long-titles.png) | Both titles truncate inside their plates; the Arch badge center is x=683. |
-| 1920 physical | [Compact geometry, inactive media](screenshots/1920-prism.png) | 1536 logical pixels wide at 1.25× scale; badge center is x=960 physical. |
-| 2560 | [Long window and media titles](screenshots/2560-long-media.png) | Angular groups expand symmetrically; badge center is x=1280. |
-| 1366 | [Inactive media](screenshots/1366-inactive-media.png) | The small `No media` placeholder retains the right side's shape. |
-| 1366 | [Workspace 2](screenshots/1366-workspace-2.png) | The native workspace state changes without shifting the bar. |
+| 1366 | [Long window and media titles](screenshots/1366-long-titles.png) | Titles remain within their diagonal sections; badge center x=683. |
+| 1920 physical | [Full bar with active media](screenshots/1920-prism.png) | 1536 logical pixels, 40 physical pixels high; badge center x=960 physical. |
+| 2560 | [Long titles](screenshots/2560-long-media.png) | Shared slopes remain aligned; badge center x=1280. |
+| 1366 | [Inactive media](screenshots/1366-inactive-media.png) | Placeholder retains the media face and utility divider. |
 
-`hyprctl layers -j` reports an `omarchy-bar` surface of **32 logical pixels** high. This is **40 physical pixels** on the 1.25× laptop panel. Main segments are 26 logical pixels high; the center badge is 32. Segment joins are visually around 2–3 logical pixels. Long text stays within the inner plates at 1366 and 2560. The original Waybar used automatic height, a 12px stylesheet font, and 4px outer spacing; its compact density informed these dimensions.
+The surface measured by `hyprctl layers -j` is 1536×32 logical pixels on the laptop. Main panels remain 26 logical pixels high; the badge remains 32. Module widths, order, and native widget behavior were not changed in this geometry pass.
 
-The approved reference has extra inset bevel details and precise glyph placements that are not exposed by Omarchy's native widget renderers. SPECTRA matches the main flat chamfered silhouette, central badge, compact density, and left/right balance. Native widget text and icons can differ with theme and state. The layout deliberately keeps native media, audio, network, Bluetooth, power, update, and mode widgets. Network, audio, and Bluetooth panels opened from the running shell through their native IPC targets. Pointer click automation was unavailable, so those exact hit targets were not separately exercised.
+## Incremental native-resolution captures
 
-`Bar.qml` remains derived from Omarchy's bar engine because v4.0.6 has no public hook for the section geometry. SPECTRA's frame changes are localized to sizing and placement of `SpectraSegment`; colors and sizes are in `SpectraTokens.js`. Compare the derived engine with the installed Omarchy version before a major shell upgrade.
+1. [Bar before refinement](iterations/00-before.png)
+2. [Layered badge and facets](iterations/01-center-badge.png)
+3. [Clock panel](iterations/02-clock-panel.png)
+4. [Media panel](iterations/03-media-panel.png)
+5. [Utility frame](iterations/04-utility-panel.png)
+6. [Geometry applied throughout](iterations/05-full-prism.png)
+
+The badge body now has a height-based aspect ratio inside the existing centered slot, two subtle outlines, a recessed dark face, and an SVG Arch mark. Small mirrored triangles bridge into the adjoining shoulders. Panels use full-height slants instead of pointed hexagonal ends. A single outer frame surrounds each section; embedded media and window faces omit a second horizontal outline. Graphite backing and a short upper bevel provide depth without gradients or glow.
+
+Compared with the source, the silhouette, side facets, and diagonal surface relationships are much closer. Exact lighting and soft reflections remain simplified into flat QML surfaces. The compact height and native widget typography produce different proportions and internal spacing from the 65px-high reference. These captures establish the actual result; they do not imply a pixel-identical reproduction.
+
+Native audio, Wi-Fi, and Bluetooth panels were opened and visually inspected through their shell IPC targets after installation. Long titles and inactive media were checked at 1366px; active media was also checked at 1920 and 2560px. Pointer click automation was unavailable, so exact pointer hit targets were not separately exercised. The layout JSON and native widget implementations remain unchanged. Plugin validation, QML parsing, shell responsiveness, and installer syntax checks passed.
+
+`Bar.qml` and `BarModel.js` remain derived from Omarchy 4.0.6. Geometry is isolated in `components/`; shared styling is in `Theme.qml`. The installer copies these files and checks they exist before moving the installed plugin into its backup directory. Compare the derived engine with upstream before a major Omarchy shell upgrade.
+
+Rollback to the stock bar with `omarchy bar use omarchy.bar`. Previous plugin copies are retained under `~/.local/state/spectra-bar/backups/`; timestamped shell configuration backups remain beside `~/.config/omarchy/shell.json`.

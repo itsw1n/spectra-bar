@@ -6,6 +6,9 @@ shell_config="$HOME/.config/omarchy/shell.json"
 [[ -f "$shell_config" ]] || { echo "Omarchy v4 shell.json is missing" >&2; exit 1; }
 python -m json.tool "$repo_dir/manifest.json" >/dev/null
 python -m json.tool "$repo_dir/layout.json" >/dev/null
+for required in Bar.qml BarModel.js Theme.qml qmldir components/ArchBadge.qml components/PrismPanel.qml components/PrismConnector.qml assets/arch.svg; do
+  [[ -f "$repo_dir/$required" ]] || { echo "Missing plugin file: $required" >&2; exit 1; }
+done
 mkdir -p "$(dirname "$plugin_dir")"
 if [[ -e "$plugin_dir" || -L "$plugin_dir" ]]; then
   backup_dir="$HOME/.local/state/spectra-bar/backups"
@@ -13,7 +16,8 @@ if [[ -e "$plugin_dir" || -L "$plugin_dir" ]]; then
   mv "$plugin_dir" "$backup_dir/itsw1n.spectra-bar.$(date +%Y%m%d%H%M%S)"
 fi
 mkdir -p "$plugin_dir"
-cp "$repo_dir/Bar.qml" "$repo_dir/BarModel.js" "$repo_dir/SpectraSegment.qml" "$repo_dir/SpectraTokens.js" "$repo_dir/manifest.json" "$plugin_dir/"
+cp "$repo_dir/Bar.qml" "$repo_dir/BarModel.js" "$repo_dir/Theme.qml" "$repo_dir/qmldir" "$repo_dir/manifest.json" "$plugin_dir/"
+cp -r "$repo_dir/components" "$repo_dir/assets" "$plugin_dir/"
 mkdir -p "$plugin_dir/scripts"
 cp "$repo_dir/scripts/stats.sh" "$plugin_dir/scripts/"
 cp "$shell_config" "$shell_config.bak.$(date +%Y%m%d%H%M%S)"
