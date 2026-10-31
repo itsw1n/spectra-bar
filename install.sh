@@ -6,7 +6,7 @@ shell_config="$HOME/.config/omarchy/shell.json"
 [[ -f "$shell_config" ]] || { echo "Omarchy v4 shell.json is missing" >&2; exit 1; }
 python -m json.tool "$repo_dir/manifest.json" >/dev/null
 python -m json.tool "$repo_dir/layout.json" >/dev/null
-for required in Bar.qml BarModel.js Theme.qml qmldir components/ArchBadge.qml components/PrismPanel.qml components/PrismConnector.qml assets/arch.svg; do
+for required in Bar.qml BarModel.js Theme.qml qmldir components/ArchBadge.qml components/ArchControlHub.qml components/HubControlRow.qml components/PrismPanel.qml components/PrismConnector.qml components/SpectraWorkspaces.qml assets/arch.svg; do
   [[ -f "$repo_dir/$required" ]] || { echo "Missing plugin file: $required" >&2; exit 1; }
 done
 mkdir -p "$(dirname "$plugin_dir")"
