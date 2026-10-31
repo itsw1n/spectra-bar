@@ -1780,6 +1780,7 @@ Item {
           anchors.fill: parent
           leftSkew: moduleListRoot.segmentRole === "center-right" || moduleListRoot.segmentRole === "center-left" ? -height : (moduleListRoot.segmentRole === "right" ? height : 0)
           rightSkew: moduleListRoot.segmentRole === "center-right" ? height : (moduleListRoot.segmentRole === "left" ? -height : 0)
+          hideRightEdge: moduleListRoot.segmentRole === "center-left"
           capLeft: moduleListRoot.segmentRole === "left"
           capRight: moduleListRoot.segmentRole === "right"
         }
@@ -1849,7 +1850,7 @@ Item {
     readonly property bool imageCustom: customType === "image"
     readonly property bool registered: registryComponent !== null
     readonly property var activeItem: {
-      if (controlHubModule) return controlHubLoader.item
+      if (slot.controlHubModule) return controlHubLoader.item
       if (registered) return registryLoader.item
       if (qmlCustom) return qmlLoader.item
       return componentLoader.item
@@ -1857,6 +1858,9 @@ Item {
     readonly property bool hovered: moduleHover.hovered
     readonly property bool dragSource: root.barDragSource === slot
     readonly property bool panelOpen: root.activePopout === slot.activeItem
+    readonly property bool desktopWorkspace: slot.moduleName === "omarchy.active-window"
+      && Hyprland.focusedWorkspace
+      && Hyprland.focusedWorkspace.toplevels.values.length === 0
     // Modules bigger than the mark they want (a text label in a padded slot,
     // a multi-line stack on a vertical bar) can say how long the open-panel
     // dot should be along the bar, so it tracks what the module paints
@@ -1876,7 +1880,8 @@ Item {
     }
     implicitHeight: moduleName === "spectra.emblem" && !root.vertical
       ? Theme.badgeHeight
-      : (activeItem && activeItem.visible ? activeItem.implicitHeight : (moduleName === "omarchy.media" ? root.barSize : 0))
+      : (activeItem && activeItem.visible ? activeItem.implicitHeight
+        : (moduleName === "omarchy.media" || moduleName === "omarchy.active-window" ? root.barSize : 0))
     width: implicitWidth
     height: implicitHeight
     z: modulePointer.dragging ? 100 : (moduleName === "spectra.emblem" ? 5 : 0)
@@ -1924,6 +1929,17 @@ Item {
     }
 
     Text {
+      visible: !root.vertical && slot.moduleName === "omarchy.active-window"
+        && (slot.desktopWorkspace || !slot.activeItem || !slot.activeItem.visible)
+      anchors.centerIn: parent
+      text: "Desktop"
+      color: Theme.muted
+      font.family: root.fontFamily
+      font.pixelSize: 11
+      z: 1
+    }
+
+    Text {
       visible: !root.vertical && slot.moduleName === "omarchy.media" && (!slot.activeItem || !slot.activeItem.visible)
       anchors.centerIn: parent
       text: "󰐊  No media"
@@ -1958,7 +1974,7 @@ Item {
     Loader {
       id: controlHubLoader
       active: slot.controlHubModule
-      sourceComponent: controlHubModule
+      sourceComponent: controlHubComponent
       anchors.fill: parent
       onLoaded: {
         slot.injectProps()
@@ -1971,7 +1987,7 @@ Item {
       active: slot.registered
       sourceComponent: slot.registered ? slot.registryComponent : null
       anchors.fill: parent
-      opacity: slot.dragSource ? 0.22 : 1.0
+      opacity: slot.desktopWorkspace ? 0 : (slot.dragSource ? 0.22 : 1.0)
       onLoaded: {
         slot.injectProps()
         Qt.callLater(slot.injectProps)
@@ -2155,7 +2171,7 @@ Item {
     function injectProps() {
       var target = activeItem
       if (!target) return
-      if (controlHubModule) {
+      if (slot.controlHubModule) {
         target.anchorItem = slot
         target.bar = root
         return
@@ -2176,7 +2192,7 @@ Item {
     }
 
     Component {
-      id: controlHubModule
+      id: controlHubComponent
       ArchControlHub {
         anchorItem: slot
         bar: root
