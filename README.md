@@ -12,7 +12,7 @@ A native [Omarchy](https://omarchy.org/) v4 bar for [Quickshell](https://quicksh
 - Centered Arch badge with a control hub
 - Sliding workspaces and responsive prism panels
 - Per-module click, middle-click, right-click, and scroll actions
-- CPU, memory, temperature, and disk usage statistics
+- CPU, memory, and temperature statistics
 - Installer backups and rollback support
 
 ## Installation

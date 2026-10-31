@@ -23,5 +23,4 @@ for path in /sys/class/thermal/thermal_zone*/temp; do
   read -r value < "$path"
   if (( value > 0 && value < 120000 )); then temp=$((value / 1000)); break; fi
 done
-disk=$(df --output=pcent / | tail -n 1 | tr -dc '0-9')
-printf '{"text":" %s°C    %s%%    %s%%   󰋊 %s%%","tooltip":"Temperature: %s°C\\nCPU: %s%%\\nRAM: %s%%\\nDisk: %s%%"}\n' "$temp" "$cpu" "$mem" "$disk" "$temp" "$cpu" "$mem" "$disk"
+printf '{"text":" %s°C    %s%%    %s%%","tooltip":"Temperature: %s°C\\nCPU: %s%%\\nRAM: %s%%"}\n' "$temp" "$cpu" "$mem" "$temp" "$cpu" "$mem"
