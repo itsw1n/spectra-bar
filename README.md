@@ -4,7 +4,7 @@
 
 A native [Omarchy](https://omarchy.org/) v4 bar for [Quickshell](https://quickshell.org/), inspired by the Spectra reference design and [MechaBar](https://github.com/sejjy/mechabar).
 
-<img width="1920" height="700" alt="screenshot-2026-10-31_09-15-22" src="https://github.com/user-attachments/assets/a56e14f4-7ee0-4fb0-8805-ac129b052eab" />
+<img width="1920" height="660" alt="image" src="https://github.com/user-attachments/assets/e9523d0d-5571-4bb5-8646-b2ce1f1c3516" />
 
 ## Important highlights
 
