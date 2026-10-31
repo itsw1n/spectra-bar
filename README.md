@@ -1,6 +1,5 @@
 # Spectra Bar
 
-![Spectra Bar](assets/spectra-bar.png)
 <img width="1920" height="700" alt="image" src="https://github.com/user-attachments/assets/589a363b-be15-4e7d-8a82-adf971bfe0fd" />
 
 A sharp, native [Omarchy](https://omarchy.org/) v4 bar for [Quickshell](https://quickshell.org/), inspired by the Spectra reference design. It keeps Omarchy's native widgets and panels while adding a compact prism-style frame, centered Arch badge, sliding workspaces, per-entry actions, and an Arch control hub.
