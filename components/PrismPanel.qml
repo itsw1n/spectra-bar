@@ -14,6 +14,7 @@ Item {
   property bool accentLeft: !embedded
   property bool divideLeft: false
   property bool divideRight: embedded
+  property bool hideRightEdge: false
   readonly property real lc: capLeft ? 4 : 0
   readonly property real rc: capRight ? 4 : 0
 
@@ -22,9 +23,9 @@ Item {
     preferredRendererType: Shape.CurveRenderer
     // A single outer frame. Inset module faces omit its horizontal outline.
     ShapePath {
-      strokeColor: panel.embedded ? "transparent" : panel.lineColor
+      strokeColor: panel.embedded || panel.hideRightEdge ? "transparent" : panel.lineColor
       strokeWidth: 0.8
-      fillColor: panel.embedded ? panel.fillColor : Theme.backing
+      fillColor: panel.embedded || panel.hideRightEdge ? panel.fillColor : Theme.backing
       joinStyle: ShapePath.MiterJoin
       startX: panel.lc + 0.5; startY: 0.5
       PathLine { x: panel.width - panel.rc - 0.5; y: 0.5 }
@@ -35,6 +36,20 @@ Item {
       PathLine { x: panel.leftSkew + 0.5; y: panel.height - panel.lc - 0.5 }
       PathLine { x: 0.5; y: panel.lc + 0.5 }
       PathLine { x: panel.lc + 0.5; y: 0.5 }
+    }
+    ShapePath {
+      strokeColor: panel.hideRightEdge ? panel.lineColor : "transparent"
+      strokeWidth: 0.8
+      fillColor: "transparent"
+      startX: panel.lc + 0.5; startY: 0.5
+      PathLine { x: panel.width - panel.rc - 0.5; y: 0.5 }
+    }
+    ShapePath {
+      strokeColor: panel.hideRightEdge ? panel.lineColor : "transparent"
+      strokeWidth: 0.8
+      fillColor: "transparent"
+      startX: panel.leftSkew + panel.lc + 0.5; startY: panel.height - 0.5
+      PathLine { x: panel.width + panel.rightSkew - panel.rc - 0.5; y: panel.height - 0.5 }
     }
     ShapePath {
       strokeColor: "transparent"
