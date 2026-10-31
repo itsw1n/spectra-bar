@@ -1,6 +1,6 @@
 # Spectra Bar
 
-![Spectra Bar](assets/spectra-bar.png)
+<img width="1920" height="52" alt="image" src="https://github.com/user-attachments/assets/4594f280-a9b2-459e-aae8-bf85b4777375" />
 
 A native [Omarchy](https://omarchy.org/) v4 bar for [Quickshell](https://quickshell.org/), inspired by the Spectra reference design and [MechaBar](https://github.com/sejjy/mechabar).
 
