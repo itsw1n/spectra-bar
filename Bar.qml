@@ -770,6 +770,14 @@ Item {
     return true
   }
 
+  function refreshIndicators() {
+    var indicators = moduleWidgets("omarchy.indicators")
+    for (var i = 0; i < indicators.length; i++) {
+      if (typeof indicators[i].refresh === "function") indicators[i].refresh()
+      else if (typeof indicators[i].reload === "function") indicators[i].reload()
+    }
+  }
+
   function isBarWidgetOpen(pluginId) {
     var item = findPanelWidget(pluginId)
     return !!item && item.opened === true
@@ -1823,6 +1831,7 @@ Item {
     readonly property string moduleName: root.entryId(entry)
     readonly property var moduleSettings: root.entrySettings(entry)
     readonly property string customType: root.customModuleType(entry)
+    readonly property bool controlHubModule: moduleName === "spectra.emblem"
     readonly property var registryMetadata: root.barWidgetRegistry.metadataFor(root.canonicalWidgetId(moduleName))
     readonly property bool firstParty: registryMetadata && registryMetadata.firstParty === true
     readonly property string pluginApiId: registered ? root.canonicalWidgetId(moduleName) : "bar-entry:" + moduleName
@@ -1840,6 +1849,7 @@ Item {
     readonly property bool imageCustom: customType === "image"
     readonly property bool registered: registryComponent !== null
     readonly property var activeItem: {
+      if (controlHubModule) return controlHubLoader.item
       if (registered) return registryLoader.item
       if (qmlCustom) return qmlLoader.item
       return componentLoader.item
@@ -1934,10 +1944,22 @@ Item {
 
     Loader {
       id: componentLoader
-      active: !slot.qmlCustom && !slot.imageCustom && !slot.registered
+      active: !slot.controlHubModule && !slot.qmlCustom && !slot.imageCustom && !slot.registered
       sourceComponent: slot.commandCustom ? customCommandModuleComponent : emptyModuleComponent
       anchors.fill: parent
       opacity: slot.moduleName === "spectra.emblem" ? 0 : (slot.dragSource ? 0.22 : 1.0)
+      onLoaded: {
+        slot.injectProps()
+        Qt.callLater(slot.injectProps)
+      }
+
+    }
+
+    Loader {
+      id: controlHubLoader
+      active: slot.controlHubModule
+      sourceComponent: controlHubModule
+      anchors.fill: parent
       onLoaded: {
         slot.injectProps()
         Qt.callLater(slot.injectProps)
@@ -2133,6 +2155,11 @@ Item {
     function injectProps() {
       var target = activeItem
       if (!target) return
+      if (controlHubModule) {
+        target.anchorItem = slot
+        target.bar = root
+        return
+      }
       if ("bar" in target) target.bar = firstParty
         ? root : root.pluginBarApiFor(pluginApiId, moduleName, registered)
       if ("moduleName" in target) {
@@ -2146,6 +2173,14 @@ Item {
     Component {
       id: customCommandModuleComponent
       CustomCommandModule { entry: slot.entry }
+    }
+
+    Component {
+      id: controlHubModule
+      ArchControlHub {
+        anchorItem: slot
+        bar: root
+      }
     }
   }
 
