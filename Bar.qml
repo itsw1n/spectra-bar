@@ -2008,7 +2008,7 @@ Item {
       readonly property real dragThreshold: Style.space(4)
 
       anchors.fill: parent
-      acceptedButtons: Qt.LeftButton
+      acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
       enabled: slot.visible && slot.width > 0 && slot.height > 0
       propagateComposedEvents: true
       // Only the hovered slot needs the hit test; without the guard every
@@ -2089,12 +2089,46 @@ Item {
           return
         }
 
+        var action = slot.entryAction(mouse.button)
+        if (action) {
+          root.run(action)
+          mouse.accepted = true
+          return
+        }
+
         if (!root.pressModuleClickTarget(slot, mouse.button, mouse.x, mouse.y)) mouse.accepted = false
+      }
+
+      onWheel: function(wheel) {
+        var action = slot.scrollAction(wheel.angleDelta.y > 0)
+        if (action) {
+          root.run(action)
+          wheel.accepted = true
+        } else {
+          wheel.accepted = false
+        }
       }
     }
 
     onActiveItemChanged: Qt.callLater(injectProps)
     onModuleSettingsChanged: injectProps()
+
+    // Optional Waybar-style overrides on a layout entry. An empty value keeps
+    // the native widget behaviour; a command replaces it for that input only.
+    function settingAction(name) {
+      var value = moduleSettings ? moduleSettings[name] : undefined
+      return value === undefined || value === null ? "" : String(value)
+    }
+
+    function entryAction(button) {
+      if (button === Qt.RightButton) return settingAction("onRightClick")
+      if (button === Qt.MiddleButton) return settingAction("onMiddleClick")
+      return settingAction("onClick")
+    }
+
+    function scrollAction(up) {
+      return settingAction(up ? "onScrollUp" : "onScrollDown")
+    }
 
     function injectProps() {
       var target = activeItem
