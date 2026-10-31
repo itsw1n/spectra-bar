@@ -1930,12 +1930,26 @@ Item {
 
     Text {
       visible: !root.vertical && slot.moduleName === "omarchy.active-window"
-        && (slot.desktopWorkspace || !slot.activeItem || !slot.activeItem.visible)
+        && (!slot.activeItem || !slot.activeItem.visible)
       anchors.centerIn: parent
       text: "Desktop"
       color: Theme.muted
       font.family: root.fontFamily
       font.pixelSize: 11
+      z: 1
+    }
+
+    Text {
+      visible: !root.vertical && slot.moduleName === "omarchy.active-window"
+        && slot.activeItem && slot.activeItem.title
+      anchors.centerIn: parent
+      width: Math.max(0, parent.width - 24)
+      text: slot.activeItem ? slot.activeItem.title : ""
+      color: root.barForeground
+      font.family: root.fontFamily
+      font.pixelSize: 11
+      elide: Text.ElideRight
+      horizontalAlignment: Text.AlignHCenter
       z: 1
     }
 
@@ -1987,7 +2001,8 @@ Item {
       active: slot.registered
       sourceComponent: slot.registered ? slot.registryComponent : null
       anchors.fill: parent
-      opacity: slot.desktopWorkspace ? 0 : (slot.dragSource ? 0.22 : 1.0)
+      opacity: slot.moduleName === "omarchy.active-window" || slot.desktopWorkspace
+        ? 0 : (slot.dragSource ? 0.22 : 1.0)
       onLoaded: {
         slot.injectProps()
         Qt.callLater(slot.injectProps)
