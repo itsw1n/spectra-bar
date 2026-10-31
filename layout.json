@@ -8,7 +8,11 @@
         "id": "omarchy.menu"
       },
       {
-        "id": "omarchy.workspaces"
+        "id": "spectra.workspaces",
+        "type": "qml",
+        "source": "~/.config/omarchy/plugins/itsw1n.spectra-bar/components/SpectraWorkspaces.qml",
+        "onScrollUp": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"+1\" })'",
+        "onScrollDown": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"-1\" })'"
       },
       {
         "id": "omarchy.active-window",
