@@ -1,8 +1,21 @@
 # Spectra Bar
 
-An Omarchy v4 shell bar based on the supplied Spectra reference. Its chamfered sections use QtQuick Shapes, while the widgets remain native. This is a custom native bar: it uses Omarchy's existing menu, workspaces, active-window, clock, updates, media, audio, Wi-Fi, Bluetooth, and power widgets and their working panels.
+![Spectra Bar](assets/spectra-bar.png)
+
+A sharp, native [Omarchy](https://omarchy.org/) v4 bar for [Quickshell](https://quickshell.org/), inspired by the Spectra reference design. It keeps Omarchy's native widgets and panels while adding a compact prism-style frame, centered Arch badge, sliding workspaces, per-entry actions, and an Arch control hub.
+
+## Highlights
+
+- Native Omarchy menu, workspaces, window title, clock, media, audio, network, Bluetooth, monitor, power, and update widgets
+- Centered Arch badge with a click-to-open control hub
+- Per-module click, right-click, middle-click, and scroll actions in `layout.json`
+- Responsive prism panels with inactive-state placeholders
+- CPU, memory, temperature, and disk usage stats
+- Installer backups and a one-command rollback to the stock bar
 
 ## Install
+
+Requirements: Omarchy v4 and a working Quickshell bar environment.
 
 ```bash
 git clone https://github.com/itsw1n/spectra-bar.git
@@ -10,18 +23,40 @@ cd spectra-bar
 ./install.sh
 ```
 
-The installer backs up `~/.config/omarchy/shell.json`, copies the plugin into `~/.config/omarchy/plugins/`, applies the layout, and selects Spectra. Run `omarchy bar use omarchy.bar` to return to the stock bar. Restore the saved `shell.json.bak.*` to restore the previous widget layout.
+The installer validates the manifest and plugin files, backs up the current Omarchy shell configuration, installs the plugin under `~/.config/omarchy/plugins/`, and selects Spectra. Restart or reload the shell if the bar does not appear immediately.
 
-`Bar.qml` and `BarModel.js` are derived from the Omarchy 4.0.6 built-in bar. The shell and native widget implementations are owned by Omarchy; this repo changes the shell frame and adds a small telemetry command. When Omarchy updates its bar engine, compare these two files with the new built-in versions before updating Spectra.
+To return to the stock bar:
 
-## Structure and validation
+```bash
+omarchy bar use omarchy.bar
+```
 
-- `components/PrismPanel.qml`: reusable inset graphite surfaces, diagonal joins, and restrained edge accents.
-- `components/ArchBadge.qml` and `PrismConnector.qml`: layered central badge and triangular shoulder facets.
-- `Theme.qml`: shared dimensions and colors.
-- `layout.json`: native widget placement, with the Arch badge anchored to the physical screen center.
-- `Bar.qml`: Omarchy 4.0.6 bar engine with small SPECTRA-specific layout changes.
-- [Visual validation](docs/visual-validation.md): real Quickshell screenshots at 1366, 1920, and 2560 pixels, plus known differences from the reference.
-- [Saved geometry goal](docs/geometry-goal.md): approved reference and the constraints for future refinements.
+The installer keeps timestamped shell backups and previous plugin copies so the previous configuration can be restored if needed.
 
-The installer saves prior shell and plugin state before activation. To roll back, select `omarchy.bar` and restore the latest `shell.json.bak.*` if you also want the old widget layout.
+## Customize
+
+Edit [`layout.json`](layout.json) to change module order, spacing-related settings, or actions. The layout supports entries such as:
+
+```json
+{
+  "id": "omarchy.monitor",
+  "onScrollUp": "omarchy-brightness-display +2%",
+  "onScrollDown": "omarchy-brightness-display 2%-"
+}
+```
+
+Visual constants live in [`Theme.qml`](Theme.qml). Reusable surfaces and widgets are in [`components/`](components/). The bar engine and layout model are [`Bar.qml`](Bar.qml) and [`BarModel.js`](BarModel.js).
+
+## Development
+
+```bash
+python -m json.tool manifest.json >/dev/null
+python -m json.tool layout.json >/dev/null
+bash -n install.sh scripts/stats.sh
+```
+
+See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) for the development workflow and Omarchy compatibility notes. [`docs/geometry-goal.md`](docs/geometry-goal.md) records the visual constraints for future bar refinements.
+
+## License
+
+MIT. See [`LICENSE`](LICENSE).

@@ -1,6 +1,6 @@
 # Visual validation
 
-The approved source is preserved as [goal.png](goal.png). All implementation captures below are from the running Omarchy 4.0.6 Quickshell bar. The laptop runs at 1920 physical pixels and 1.25× scale. Temporary headless outputs supplied 1366 and 2560 logical pixels at 1× scale and were removed after capture.
+The approved source is preserved as [the project image](../assets/spectra-bar.png). All implementation captures below are from the running Omarchy 4.0.6 Quickshell bar. The laptop runs at 1920 physical pixels and 1.25× scale. Temporary headless outputs supplied 1366 and 2560 logical pixels at 1× scale and were removed after capture.
 
 | Width | Capture | Checked result |
 | --- | --- | --- |
