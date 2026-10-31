@@ -24,7 +24,9 @@
         "id": "spectra.stats",
         "type": "command",
         "exec": "~/.config/omarchy/plugins/itsw1n.spectra-bar/scripts/stats.sh",
-        "interval": 5
+        "interval": 5,
+        "onClick": "omarchy-launch-or-focus-tui btop",
+        "onRightClick": "omarchy-launch-terminal"
       },
       {
         "id": "omarchy.indicators"
@@ -52,13 +54,16 @@
         "id": "omarchy.audio"
       },
       {
-        "id": "omarchy.network"
+        "id": "omarchy.network",
+        "onRightClick": "bash -lc 'if [ \"$(nmcli -t radio wifi)\" = enabled ]; then nmcli radio wifi off && omarchy-notification-send \"Wi-Fi\" \"Radio off\"; else nmcli radio wifi on && omarchy-notification-send \"Wi-Fi\" \"Radio on\"; fi'"
       },
       {
         "id": "omarchy.bluetooth"
       },
       {
-        "id": "omarchy.monitor"
+        "id": "omarchy.monitor",
+        "onScrollUp": "omarchy-brightness-display +2%",
+        "onScrollDown": "omarchy-brightness-display 2%-"
       },
       {
         "id": "omarchy.power",
