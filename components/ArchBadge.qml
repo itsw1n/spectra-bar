@@ -21,7 +21,7 @@ Item {
       ShapePath {
         strokeColor: Theme.border
         strokeWidth: 1
-        fillColor: Theme.badge
+        fillColor: Theme.badgeInner
         joinStyle: ShapePath.MiterJoin
         startX: body.cut; startY: 0.5
         PathLine { x: body.width - body.cut; y: 0.5 }
@@ -31,23 +31,10 @@ Item {
         PathLine { x: 0.5; y: body.height / 2 }
         PathLine { x: body.cut; y: 0.5 }
       }
-      ShapePath {
-        strokeColor: Theme.badgeRidge
-        strokeWidth: 0.7
-        fillColor: Theme.badgeInner
-        joinStyle: ShapePath.MiterJoin
-        startX: body.cut + 1; startY: 2.5
-        PathLine { x: body.width - body.cut - 1; y: 2.5 }
-        PathLine { x: body.width - 3.5; y: body.height / 2 }
-        PathLine { x: body.width - body.cut - 1; y: body.height - 2.5 }
-        PathLine { x: body.cut + 1; y: body.height - 2.5 }
-        PathLine { x: 3.5; y: body.height / 2 }
-        PathLine { x: body.cut + 1; y: 2.5 }
-      }
     }
     Image {
-      width: 23
-      height: 23
+      width: Math.min(21, body.height * 0.66)
+      height: Math.min(21, body.height * 0.66)
       anchors.centerIn: parent
       source: "../assets/arch.svg"
       sourceSize.width: 64
