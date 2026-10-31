@@ -40,7 +40,8 @@
         "format": "ddd d  |  HH:mm"
       },
       {
-        "id": "omarchy.system-update"
+        "id": "omarchy.system-update",
+        "onClick": "omarchy-launch-floating-terminal-with-presentation omarchy-update"
       }
     ],
     "right": [
