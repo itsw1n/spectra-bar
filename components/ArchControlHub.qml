@@ -95,7 +95,7 @@ Item {
     bar: controlHub.bar
     owner: controlHub
     open: controlHub.opened
-    centerOnBar: true
+    centerOnBar: false
     margin: 2
     gap: 2
     padding: 10
