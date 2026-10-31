@@ -29,9 +29,6 @@
         "onRightClick": "omarchy-launch-terminal"
       },
       {
-        "id": "omarchy.indicators"
-      },
-      {
         "id": "spectra.emblem",
         "type": "command",
         "exec": "printf '  \udb82\udcc7  '",
