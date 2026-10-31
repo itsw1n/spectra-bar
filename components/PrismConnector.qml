@@ -18,37 +18,37 @@ Item {
       strokeColor: Theme.badgeRidge
       strokeWidth: 0.7
       fillColor: Theme.wingShadow
-      startX: 0.5; startY: 3.5
-      PathLine { x: Theme.badgeWing + 10; y: 3.5 }
-      PathLine { x: Theme.badgeWing; y: connector.height / 2 }
-      PathLine { x: 10; y: connector.height / 2 }
-      PathLine { x: 0.5; y: 3.5 }
+      startX: 0.5; startY: 2.5
+      PathLine { x: Theme.badgeWing + 18; y: 2.5 }
+      PathLine { x: Theme.badgeWing + 5; y: connector.height / 2 }
+      PathLine { x: 18; y: connector.height / 2 }
+      PathLine { x: 0.5; y: 2.5 }
     }
     ShapePath {
       strokeColor: "transparent"
       fillColor: Theme.wing
-      startX: 1; startY: 4
-      PathLine { x: 11; y: 4 }
-      PathLine { x: 9; y: 10 }
-      PathLine { x: 1; y: 4 }
+      startX: 1; startY: 3
+      PathLine { x: 18; y: 3 }
+      PathLine { x: 12; y: 10 }
+      PathLine { x: 1; y: 3 }
     }
     ShapePath {
       strokeColor: Theme.badgeRidge
       strokeWidth: 0.7
       fillColor: Theme.wingShadow
-      startX: 0.5; startY: connector.height - 3.5
-      PathLine { x: Theme.badgeWing + 10; y: connector.height - 3.5 }
-      PathLine { x: Theme.badgeWing; y: connector.height / 2 }
-      PathLine { x: 10; y: connector.height / 2 }
-      PathLine { x: 0.5; y: connector.height - 3.5 }
+      startX: 0.5; startY: connector.height - 2.5
+      PathLine { x: Theme.badgeWing + 18; y: connector.height - 2.5 }
+      PathLine { x: Theme.badgeWing + 5; y: connector.height / 2 }
+      PathLine { x: 18; y: connector.height / 2 }
+      PathLine { x: 0.5; y: connector.height - 2.5 }
     }
     ShapePath {
       strokeColor: "transparent"
       fillColor: Theme.edgeAccent
-      startX: 1; startY: connector.height - 4
-      PathLine { x: 8; y: connector.height - 4 }
-      PathLine { x: 9; y: connector.height - 8 }
-      PathLine { x: 1; y: connector.height - 4 }
+      startX: 1; startY: connector.height - 3
+      PathLine { x: 16; y: connector.height - 3 }
+      PathLine { x: 12; y: connector.height - 10 }
+      PathLine { x: 1; y: connector.height - 3 }
     }
   }
 }
