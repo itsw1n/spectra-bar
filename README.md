@@ -1,19 +1,19 @@
 # Spectra Bar
 
-<img width="1920" height="700" alt="image" src="https://github.com/user-attachments/assets/589a363b-be15-4e7d-8a82-adf971bfe0fd" />
+![Spectra Bar](assets/spectra-bar.png)
 
-A sharp, native [Omarchy](https://omarchy.org/) v4 bar for [Quickshell](https://quickshell.org/), inspired by the Spectra reference design and [MechaBar](https://github.com/sejjy/mechabar). It keeps Omarchy's native widgets and panels while adding a compact prism-style frame, centered Arch badge, sliding workspaces, per-entry actions, and an Arch control hub.
+A native [Omarchy](https://omarchy.org/) v4 bar for [Quickshell](https://quickshell.org/), inspired by the Spectra reference design and [MechaBar](https://github.com/sejjy/mechabar).
 
-## Highlights
+## Important highlights
 
-- Native Omarchy menu, workspaces, window title, clock, media, audio, network, Bluetooth, monitor, power, and update widgets
-- Centered Arch badge with a click-to-open control hub
-- Per-module click, right-click, middle-click, and scroll actions in `layout.json`
-- Responsive prism panels with inactive-state placeholders
-- CPU, memory, temperature, and disk usage stats
-- Installer backups and a one-command rollback to the stock bar
+- Native Omarchy widgets and panels
+- Centered Arch badge with a control hub
+- Sliding workspaces and responsive prism panels
+- Per-module click, middle-click, right-click, and scroll actions
+- CPU, memory, temperature, and disk usage statistics
+- Installer backups and rollback support
 
-## Install
+## Installation
 
 Requirements: Omarchy v4 and a working Quickshell bar environment.
 
@@ -33,9 +33,9 @@ omarchy bar use omarchy.bar
 
 The installer keeps timestamped shell backups and previous plugin copies so the previous configuration can be restored if needed.
 
-## Customize
+## Configuration
 
-Edit [`layout.json`](layout.json) to change module order, spacing-related settings, or actions. The layout supports entries such as:
+Edit [`layout.json`](layout.json) to change module order and actions:
 
 ```json
 {
@@ -45,17 +45,7 @@ Edit [`layout.json`](layout.json) to change module order, spacing-related settin
 }
 ```
 
-Visual constants live in [`Theme.qml`](Theme.qml). Reusable surfaces and widgets are in [`components/`](components/). The bar engine and layout model are [`Bar.qml`](Bar.qml) and [`BarModel.js`](BarModel.js).
-
-## Development
-
-```bash
-python -m json.tool manifest.json >/dev/null
-python -m json.tool layout.json >/dev/null
-bash -n install.sh scripts/stats.sh
-```
-
-See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) for the development workflow and Omarchy compatibility notes. [`docs/geometry-goal.md`](docs/geometry-goal.md) records the visual constraints for future bar refinements.
+For contributor setup, validation, and Omarchy compatibility notes, see [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md). For visual design constraints, see [`docs/geometry-goal.md`](docs/geometry-goal.md). Shared styling is defined in [`Theme.qml`](Theme.qml), while reusable components live in [`components/`](components/).
 
 ## License
 
