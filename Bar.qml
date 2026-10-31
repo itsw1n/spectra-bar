@@ -1876,12 +1876,14 @@ Item {
       if (moduleName === "spectra.emblem") return Theme.badgeWidth(screenWidth)
       if (moduleName === "omarchy.active-window") return Math.max(150, Theme.sectionWidth(screenWidth, "left") - 160)
       if (moduleName === "omarchy.media") return Math.max(150, Theme.sectionWidth(screenWidth, "right") - 175)
+      if (moduleName === "omarchy.system-update") return Style.bar.statusSlot + 18
       return activeItem && activeItem.visible ? activeItem.implicitWidth : 0
     }
     implicitHeight: moduleName === "spectra.emblem" && !root.vertical
       ? Theme.badgeHeight
       : (activeItem && activeItem.visible ? activeItem.implicitHeight
-        : (moduleName === "omarchy.media" || moduleName === "omarchy.active-window" ? root.barSize : 0))
+        : (moduleName === "omarchy.media" || moduleName === "omarchy.active-window"
+          || moduleName === "omarchy.system-update" ? root.barSize : 0))
     width: implicitWidth
     height: implicitHeight
     z: modulePointer.dragging ? 100 : (moduleName === "spectra.emblem" ? 5 : 0)
@@ -1962,6 +1964,30 @@ Item {
       font.pixelSize: 11
     }
 
+    Text {
+      visible: !root.vertical && slot.moduleName === "omarchy.system-update"
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.right: parent.right
+      anchors.rightMargin: 2
+      text: "\uf019"
+      color: root.barForeground
+      font.family: root.fontFamily
+      font.pixelSize: 14
+      z: 1
+    }
+
+    Text {
+      visible: !root.vertical && slot.moduleName === "omarchy.system-update"
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.left: parent.left
+      anchors.leftMargin: 2
+      text: "|"
+      color: Theme.muted
+      font.family: root.fontFamily
+      font.pixelSize: 11
+      z: 1
+    }
+
     BorderSurface {
       visible: slot.dragSource
       anchors.fill: parent
@@ -2001,7 +2027,9 @@ Item {
       active: slot.registered
       sourceComponent: slot.registered ? slot.registryComponent : null
       anchors.fill: parent
-      opacity: slot.moduleName === "omarchy.active-window" || slot.desktopWorkspace
+      opacity: slot.moduleName === "omarchy.active-window"
+        || slot.moduleName === "omarchy.system-update"
+        || slot.desktopWorkspace
         ? 0 : (slot.dragSource ? 0.22 : 1.0)
       onLoaded: {
         slot.injectProps()
