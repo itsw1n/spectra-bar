@@ -4,6 +4,9 @@
 
 A native [Omarchy](https://omarchy.org/) v4 bar for [Quickshell](https://quickshell.org/), inspired by the Spectra reference design and [MechaBar](https://github.com/sejjy/mechabar).
 
+Install Spectra directly on an existing Omarchy v4 desktop. This repository
+contains the bar's code, configuration, and installer.
+
 <img width="1920" height="660" alt="image" src="https://github.com/user-attachments/assets/e9523d0d-5571-4bb5-8646-b2ce1f1c3516" />
 
 ## Important highlights
@@ -43,12 +46,15 @@ to close. Unavailable controls are skipped.
 
 **AI Usage** opens Omarchy's native agent dashboard for usage, limits, and token
 history. In that panel, **←/→** switches providers and **Esc** closes it.
+Accounts and usage records come from the AI tools configured on the machine;
+Spectra does not include account credentials.
 
 The hub can also be opened with `omarchy-shell spectra.hub open`.
 
 ## Configuration
 
-Edit [`layout.json`](layout.json) to change module order and actions:
+[`layout.json`](layout.json) defines the module order and actions applied by the
+installer. For example, this entry changes brightness when scrolling:
 
 ```json
 {
@@ -57,6 +63,11 @@ Edit [`layout.json`](layout.json) to change module order and actions:
   "onScrollDown": "omarchy-brightness-display 2%-"
 }
 ```
+
+For an installed bar, the active settings are in `~/.config/omarchy/shell.json`
+under `bar`. Changes to this repository's `layout.json` take effect when running
+`./install.sh` again; the installer applies the whole layout from that file.
+Shared colors and dimensions are in [`Theme.qml`](Theme.qml).
 
 For a file map and component responsibilities, see [`docs/architecture.md`](docs/architecture.md). Development checks and Omarchy compatibility notes are in [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md); visual constraints are in [`docs/geometry-goal.md`](docs/geometry-goal.md).
 
