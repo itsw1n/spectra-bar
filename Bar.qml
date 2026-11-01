@@ -9,6 +9,7 @@ import qs.Commons as Commons
 import qs.Ui
 import "BarModel.js" as BarModel
 import "components"
+import "components/hub"
 
 Item {
   id: root

@@ -3,25 +3,47 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Ui
+import "../.."
 import ".."
 
 Item {
   id: controlHub
   required property Item anchorItem
   required property QtObject bar
-  property string omarchyPath: Quickshell.env("OMARCHY_PATH")
   property bool opened: false
-  property bool voxtypeAvailable: false
-  property bool recorderAvailable: false
+  readonly property bool voxtypeAvailable: agentsControl.voxtypeAvailable
+  readonly property bool recorderAvailable: agentsControl.recorderAvailable
   readonly property bool revealInactiveIndicators: true
-  readonly property var modeRows: [microphone, awake, dnd, nightlight, recording, dictation, reminder]
+  readonly property var modeRows: [microphone, awake, dnd, nightlight, recording, dictation, reminder, aiUsage]
+  readonly property var navigationRows: modeRows.concat([systemMenu])
+  property int selectedIndex: -1
   readonly property bool recordingActive: recording.active
   readonly property bool microphoneActive: microphone.active
   implicitWidth: anchorItem ? anchorItem.width : 68
   implicitHeight: Theme.badgeHeight
 
-  function nativeIndicator(name) {
-    return "file://" + omarchyPath + "/shell/plugins/bar/indicators/" + name + ".qml"
+  function selectRow(row) {
+    var index = navigationRows.indexOf(row)
+    if (index >= 0 && row.ready) selectedIndex = index
+  }
+
+  function moveSelection(direction) {
+    var count = navigationRows.length
+    var index = selectedIndex
+    if (index < 0) index = direction > 0 ? -1 : 0
+    for (var step = 0; step < count; step++) {
+      index = (index + direction + count) % count
+      if (navigationRows[index].ready) {
+        selectedIndex = index
+        return
+      }
+    }
+    selectedIndex = -1
+  }
+
+  function activateSelection() {
+    if (selectedIndex >= 0 && selectedIndex < navigationRows.length)
+      navigationRows[selectedIndex].activate(Qt.LeftButton)
   }
 
   function refresh() {
@@ -36,22 +58,30 @@ Item {
     if (bar && typeof bar.refreshIndicators === "function") bar.refreshIndicators()
     refresh()
     opened = true
-    Qt.callLater(function() { content.forceActiveFocus() })
+    selectedIndex = -1
+    moveSelection(1)
+    Qt.callLater(function() { if (controlHub.opened) content.forceActiveFocus() })
   }
-  function close() { opened = false }
+  function close() { opened = false; selectedIndex = -1 }
   function toggle() { if (opened) close(); else open() }
 
   Component.onDestruction: if (bar && bar.activePopout === controlHub) bar.releasePopout(controlHub)
 
-  Process {
-    command: ["bash", "-c", "for tool in voxtype gpu-screen-recorder; do command -v \"$tool\" >/dev/null && printf '%s\\n' \"$tool\"; done"]
-    running: true
-    stdout: SplitParser {
-      onRead: function(tool) {
-        if (tool.trim() === "voxtype") controlHub.voxtypeAvailable = true
-        if (tool.trim() === "gpu-screen-recorder") controlHub.recorderAvailable = true
-      }
-    }
+  IpcHandler {
+    target: "spectra.hub"
+    enabled: !!controlHub.bar && controlHub.bar.findPanelWidget("spectra.emblem") === controlHub
+    function open(): void { controlHub.open() }
+    function close(): void { controlHub.close() }
+    function toggle(): void { controlHub.toggle() }
+  }
+
+  OmarchyControls {
+    id: agentsControl
+    anchors.fill: parent
+    bar: controlHub.bar
+    indicatorHost: controlHub
+    modeId: "Agents"
+    hideButton: true
   }
 
   WidgetButton {
@@ -104,12 +134,15 @@ Item {
     contentHeight: fittedContentHeight(column.implicitHeight)
     focusTarget: content
 
-    FocusScope {
+    PanelKeyCatcher {
       id: content
       anchors.fill: parent
       opacity: controlHub.opened ? 1 : 0
       focus: controlHub.opened
-      Keys.onEscapePressed: function(event) { controlHub.close(); event.accepted = true }
+      onMoveRequested: function(dx, dy) { if (dy !== 0) controlHub.moveSelection(dy) }
+      onTabRequested: function(direction) { controlHub.moveSelection(direction) }
+      onActivateRequested: controlHub.activateSelection()
+      onCloseRequested: controlHub.close()
       transform: Translate {
         y: controlHub.opened ? 0 : -6
         Behavior on y { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
@@ -150,7 +183,6 @@ Item {
           width: parent.width
           modeId: "Microphone"
           caption: "Microphone"
-          nativeSource: "file://" + controlHub.omarchyPath + "/shell/plugins/bar/widgets/Microphone.qml"
           unavailableReason: "No microphone input is available"
         }
         HubControlRow {
@@ -159,7 +191,6 @@ Item {
           width: parent.width
           modeId: "StayAwake"
           caption: "Stay Awake"
-          nativeSource: controlHub.nativeIndicator(modeId)
         }
         HubControlRow {
           id: dnd
@@ -167,7 +198,6 @@ Item {
           width: parent.width
           modeId: "Dnd"
           caption: "Do Not Disturb"
-          nativeSource: controlHub.nativeIndicator(modeId)
         }
         HubControlRow {
           id: nightlight
@@ -175,7 +205,6 @@ Item {
           width: parent.width
           modeId: "NightLight"
           caption: "Night Light"
-          nativeSource: controlHub.nativeIndicator(modeId)
         }
         HubControlRow {
           id: recording
@@ -183,7 +212,6 @@ Item {
           width: parent.width
           modeId: "ScreenRecording"
           caption: "Screen Recording"
-          nativeSource: controlHub.nativeIndicator(modeId)
           available: controlHub.recorderAvailable
           unavailableReason: "gpu-screen-recorder is not installed"
           closeOnActivate: true
@@ -194,7 +222,6 @@ Item {
           width: parent.width
           modeId: "Dictation"
           caption: "Dictation"
-          nativeSource: controlHub.nativeIndicator(modeId)
           available: controlHub.voxtypeAvailable
           unavailableReason: "Voxtype is not installed"
           closeOnActivate: true
@@ -205,18 +232,58 @@ Item {
           width: parent.width
           modeId: "Reminder"
           caption: "Reminders"
-          nativeSource: controlHub.nativeIndicator(modeId)
+          closeOnActivate: true
+        }
+
+        HubControlRow {
+          id: aiUsage
+          hub: controlHub
+          width: parent.width
+          modeId: "Agents"
+          caption: "AI Usage"
+          externalControl: agentsControl.control
+          iconText: "󱚣"
+          unavailableReason: "AI usage panel is unavailable"
           closeOnActivate: true
         }
 
         Rectangle { width: parent.width; height: 1; color: Theme.badgeRidge }
-        WidgetButton {
+        Item {
+          id: systemMenu
           width: parent.width
-          bar: controlHub.bar
-          text: "󰤄  System menu"
-          fontSize: 11
-          tooltipText: "Lock, suspend, restart, or shut down"
-          onPressed: { controlHub.close(); controlHub.bar.run("omarchy-menu summon system") }
+          height: 32
+          readonly property bool ready: true
+          readonly property bool selected: controlHub.opened
+            && controlHub.navigationRows[controlHub.selectedIndex] === systemMenu
+          function activate(button) {
+            controlHub.close()
+            controlHub.bar.run("omarchy-menu summon system")
+          }
+          Rectangle {
+            anchors.fill: parent
+            color: systemMenu.selected ? Theme.badge : "transparent"
+            border.width: systemMenu.selected ? 1 : 0
+            border.color: Theme.border
+            radius: 3
+          }
+          WidgetButton {
+            anchors.fill: parent
+            bar: controlHub.bar
+            text: "󰤄  System menu"
+            fontSize: 11
+            tooltipText: "Lock, suspend, restart, or shut down"
+            onPressed: systemMenu.activate(Qt.LeftButton)
+          }
+        }
+        Text {
+          width: parent.width
+          height: 22
+          verticalAlignment: Text.AlignVCenter
+          horizontalAlignment: Text.AlignHCenter
+          text: "↑/↓ Navigate · Enter Select · Esc Close"
+          color: Theme.muted
+          font.family: controlHub.bar.fontFamily
+          font.pixelSize: 10
         }
       }
     }
