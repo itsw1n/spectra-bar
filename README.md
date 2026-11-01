@@ -58,7 +58,7 @@ Edit [`layout.json`](layout.json) to change module order and actions:
 }
 ```
 
-For contributor setup, validation, and Omarchy compatibility notes, see [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md). For visual design constraints, see [`docs/geometry-goal.md`](docs/geometry-goal.md). Shared styling is defined in [`Theme.qml`](Theme.qml), while reusable components live in [`components/`](components/).
+For a file map and component responsibilities, see [`docs/architecture.md`](docs/architecture.md). Development checks and Omarchy compatibility notes are in [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md); visual constraints are in [`docs/geometry-goal.md`](docs/geometry-goal.md).
 
 ## License
 
