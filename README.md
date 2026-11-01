@@ -35,6 +35,17 @@ omarchy bar use omarchy.bar
 
 The installer keeps timestamped shell backups and previous plugin copies so the previous configuration can be restored if needed.
 
+## Arch Control Hub
+
+Click the Arch badge to open the hub. Use **↑/↓** (or **j/k**) to select a row,
+**Tab/Shift+Tab** to move forward/back, **Enter/Space** to activate, and **Esc**
+to close. Unavailable controls are skipped.
+
+**AI Usage** opens Omarchy's native agent dashboard for usage, limits, and token
+history. In that panel, **←/→** switches providers and **Esc** closes it.
+
+The hub can also be opened with `omarchy-shell spectra.hub open`.
+
 ## Configuration
 
 Edit [`layout.json`](layout.json) to change module order and actions:
